@@ -16,4 +16,6 @@ $( document ).ready(function() {
         });*/
     });
 
+    $("#plotDataBtn").click(pollData);
+
 })
