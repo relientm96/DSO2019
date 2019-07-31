@@ -8,6 +8,7 @@ function generateData(){
     for (i = 0; i < len ; i++){
         plotData[i] = Math.sin((Math.random()*5)) + Math.exp(-2*Math.random());
     }
+    document.getElementById("espstatus").innerHTML = "Generating Random Data!";
     chart.series[0].setData(plotData);
 }
 
