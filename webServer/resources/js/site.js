@@ -1,7 +1,8 @@
 $( document ).ready(function() {
 
-    //generateData();
-    $("#randomBtn").click(function(){
+    generateData();
+    $("#generateBtn").click(function(){
+        generateData();
         /*
         $.ajax({
             url: "http://18.139.115.251/remote/mario",
