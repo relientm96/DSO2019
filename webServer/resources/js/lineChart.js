@@ -15,6 +15,7 @@ function generateData(){
 //Get data from sensor
 function pollData(){
     var plotData = [];
+    document.getElementById("espstatus").innerHTML = "Loading Data from ESP8266...";
     $.ajax({
         url: ESP_URL,
         type: 'GET',
@@ -33,11 +34,15 @@ function pollData(){
                 }
             }
             chart.series[0].setData(plotData);
-            document.getElementById("espstatus").innerHTML = "Successfully Connected to ESP8266!";
+            if(document.getElementById("espstatus").textContent != "Generating Random Data!"){
+                document.getElementById("espstatus").innerHTML = "Successfully Connected to ESP8266!";
+            }
         },
         error: function (){
             console.log("Error Occured in fetching data from sensor!");
-            document.getElementById("espstatus").innerHTML = "Cannot Get Data from ESP8266!";
+            if(document.getElementById("espstatus").textContent != "Generating Random Data!"){
+                document.getElementById("espstatus").innerHTML = "Cannot Get Data from ESP8266!";
+            }
         }
     });
 }
