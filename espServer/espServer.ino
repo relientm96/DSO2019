@@ -94,7 +94,7 @@ void handleDSOConfigs() {
     char currentChar = message.charAt(i);
     if (currentChar == 'n') {
       int k = i + 1;
-      char sampleChar;
+      char sampleChar = message.charAt(k);
       Serial.print("Sample Number: \n");
       while (sampleChar != ' ') {
         sampleChar = message.charAt(k);
@@ -106,7 +106,7 @@ void handleDSOConfigs() {
     }
     if (currentChar == 't') {
       int k = i + 1;
-      char sampleChar;
+      char sampleChar = message.charAt(k);
       Serial.print("Trigger Value: \n");
       while (sampleChar != ' ') {
         sampleChar = message.charAt(k);
@@ -118,7 +118,7 @@ void handleDSOConfigs() {
     }
     if (currentChar == 's') {
       int k = i + 1;
-      char sampleChar;
+      char sampleChar = message.charAt(k);
       Serial.print("Sampling Frequency: \n");
       while (sampleChar != ' ') {
         sampleChar = message.charAt(k);
@@ -130,7 +130,7 @@ void handleDSOConfigs() {
     }
     if (currentChar == 'f') {
       int k = i + 1;
-      char sampleChar;
+      char sampleChar = message.charAt(k);
       Serial.print("Force Trigger: \n");
       while (sampleChar != ' ') {
         sampleChar = message.charAt(k);
