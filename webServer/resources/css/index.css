@@ -8,8 +8,8 @@ body {
 }
 
 #containerPlot {
-    min-width: 310px;
-	max-width: 800px;
+    min-width: 100%; /*310px*/
+	max-width: 100%; /*800px*/
 	height: 400px;
 	margin: 0 auto
 }

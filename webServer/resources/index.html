@@ -33,28 +33,109 @@
     <link rel="stylesheet" text="text/css" href="css/index.css" > </link>
     <script src="js/site.js"></script>
 
+    <!-- JQuery Knob-->
+    <script src="https://rawcdn.githack.com/aterrien/jQuery-Knob/755309e933d326ffaa5a2d758dc377147b766515/dist/jquery.knob.min.js"></script>
     <title>DSO Interface 2019</title>
 
   </head>
 
   <body>
-    <div id="readingSection" class="container">
-        <div class="section">
-          <div class="card hoverable">
-            <div class="card-content">
-                <h3> Oscilloscope Plot </h3>
-                <div id="containerPlot"></div>
-                <h5 id="espstatus"></h5>
-                <div style="display:inline-block">
-                    <a  id="plotDataBtn" class="waves-effect waves-light btn" style="color: white">Plot Data</a>
-                    <a  id="generateBtn" class="waves-effect waves-light btn" style="color: white">Generate Data</a>                
-                </div>
+
+  <div id="readingSection" class="container">
+    <div class="section">
+      <div class="card hoverable">
+        <div class="card-content">
+            <h3> Digital Oscilloscope Plot </h3>
+            <a  id="verBtn" class="waves-effect waves-light btn" style="color: white">Version</a>
+            <br>
+            <div id="containerPlot"></div>
+            <h5 id="espstatus"></h5>
+            <div style="display:inline-block">
+                <a  id="plotDataBtn" class="waves-effect waves-light btn" style="color: white">Plot Data</a>
+                <a  id="generateBtn" class="waves-effect waves-light btn" style="color: white">Generate Data</a>                
             </div>
-          </div> 
         </div>
+      </div> 
+    </div>
+  </div>
+
+  <div class="container">
+      <div class="card hoverable"> 
+        <div class="card-content">
+          <h5>Configuration Settings</h5>
+          <br>
+          <div class="row">
+
+            <div class="col s12 m12 l6">
+              <h5>Sample Rate</h5>
+              <br>
+                <form>
+                    <p>
+                    <label>
+                      <input id="40MhzRadio" class="with-gap" name="group1" type="radio"/>
+                      <span>40MHz</span>
+                    </label>
+                    </p>
+                    <p>
+                      <label>
+                        <input id="20MhzRadio" class="with-gap" name="group1" type="radio"/>
+                        <span>20MHz</span>
+                      </label>
+                    </p>
+                    <p>
+                    <label>
+                      <input id="10MhzRadio" class="with-gap" name="group1" type="radio"/>
+                      <span>10MHz</span>
+                    </label>
+                    </p>
+                </form>
+                <h5>Force Trigger</h5>
+                <form>
+                      <p>
+                      <label>
+                        <input id="yesForceTrigger" class="with-gap" name="group1" type="radio"/>
+                        <span>Force Trigger</span>
+                      </label>
+                      </p>
+                      <p>
+                        <label>
+                          <input id="noForceTrigger" class="with-gap" name="group1" type="radio"/>
+                          <span>No Force Trigger</span>
+                        </label>
+                      </p>
+                </form>
+                <h5>Edge Trigger</h5>
+                <form>
+                      <p>
+                      <label>
+                        <input id="yesRising" class="with-gap" name="group1" type="radio"/>
+                        <span>Rising Edge</span>
+                      </label>
+                      </p>
+                      <p>
+                        <label>
+                          <input id="yesFalling"  class="with-gap" name="group1" type="radio"/>
+                          <span>Falling Edge</span>
+                        </label>
+                      </p>
+                </form>
+            </div>
+
+            <div class="col s12 m12 l6">
+                <h5>Number of Samples</h5>
+                <input type="text" value="1000" class="numbSampDial">
+                <h5>Trigger Value</h5>
+                <input type="text" value="0" class="triggerDial">
+            </div>
+
+          </div>
+          <a id="configBtn" class="waves-effect waves-light btn" style="color: white">Update</a>                
+        </div>
+      </div>
     </div>
 
     <script src="js/lineChart.js"></script>
+
   </body>
 
 </html>

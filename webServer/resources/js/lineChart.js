@@ -50,7 +50,7 @@ function pollData(){
 //Plot using HighCharts
 var chart = Highcharts.chart('containerPlot', {
     title: {
-        text: 'Digital Oscilloscope Plot'
+        text: 'Sampled Voltage Plot'
     },
     subtitle: {
         text: 'Matthew Yong - 2019'
@@ -59,6 +59,9 @@ var chart = Highcharts.chart('containerPlot', {
         title: {
             text: 'Voltage (V)'
         }
+    },
+    credits: {
+        enabled: false
     },
     plotOptions: {
         series: {
