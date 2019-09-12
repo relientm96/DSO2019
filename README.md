@@ -37,5 +37,5 @@ Within the Digital Oscilloscope (DSO), the following subsystems are involved:
 
 ## System Block Diagram
 Below is the planned overall block diagram of the entire oscilloscope system.
-![Block Diagram](images/blockdiagram.jpg)
+![Block Diagram](images/blockdiagram.JPG)
 
