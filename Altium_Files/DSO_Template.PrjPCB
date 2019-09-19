@@ -276,6 +276,10 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XWIVQQYB
 
+[GeneratedDocument1]
+DocumentPath=Project Outputs for DSO_Template\Design Rule Check - DSO.html
+DItemRevisionGUID=
+
 [Configuration1]
 Name=Default Configuration
 ParameterCount=0
