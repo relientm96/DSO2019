@@ -39,3 +39,10 @@ Within the Digital Oscilloscope (DSO), the following subsystems are involved:
 Below is the planned overall block diagram of the entire oscilloscope system.
 ![Block Diagram](images/blockdiagram.JPG)
 
+## PCB Design
+Generated Top Layer of 2D PCB Design file from Altium Designer.
+![2D PCB](images/2D_PCB_TOP.JPG)
+Generated Top Layer of 3D PCB Design file from Altium Designer.
+![3D PCB](images/3D_PCB_TOP.JPG)
+
+
