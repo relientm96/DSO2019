@@ -1,4 +1,4 @@
-//Chart Scriptsk
+//Chart Scripts
 
 const ESP_URL = "http://192.168.43.170"; //internal IP of ESP8266 from phone
 //const ESP_URL = "http://10.0.0.15"; //internal IP of ESP8266 from home network
@@ -14,10 +14,13 @@ function map(x, in_min, in_max, out_min, out_max) {
 
 // Data generated randomly (for test)
 function generateData() {
+    var freq = 200;
     for (i = 0; i < len; i++) {
-        plotData[i] = Math.sin(2 * 3.142 * 5 * i);
+        //plotData[i] = (1 + 0.3 * Math.cos(2 * 3.142 * 100 * i)) * Math.cos(2 * 3.142 * 2000 * i);
+        var plotDataValue = Math.round(128 * Math.sin(2 * 3.142 * freq * i) + 16 * Math.sin(2 * 3.142 * 5 * freq * i)) + 127;
+        plotData[i] = plotDataValue;
     }
-    document.getElementById("espstatus").innerHTML = "Generating Random Data!";
+    document.getElementById("espstatus").innerHTML = "Generated Signal!";
     chart.series[0].setData(plotData);
     fftPlot(plotData);
 }
@@ -33,6 +36,9 @@ function clearPlot() {
 function pollData() {
     // Initialize variables
     var plotData = [];
+    // Variables to try to get period
+    var startingVal = 0;
+    var flagToGetPeriod = 1;
     // Set status
     document.getElementById("espstatus").innerHTML = "Loading Data from ESP8266...";
     // Send a GET Request to receive oscilloscope data from ESP8266
@@ -44,16 +50,37 @@ function pollData() {
             var valuesArr = result.split(',');
             // Adding data to array and mapping from 0->255 (8 bit unsigned numbers) to , -5 -> 5 Volts
             for (i = 0; i < valuesArr.length; i++) {
+                // Reading values into array
                 valueRaw = parseInt(valuesArr[i]);
                 valueOut = map(valueRaw, 0, 255, -5, 5) - 0.30; // Added offset to adjust plot
                 plotData.push(valueOut);
+
+                // Period calculations
+                if (i == 0) {
+                    // Get starting point value
+                    startingVal = plotDataValue;
+                } else {
+                    // If close enough and first time and after 20 counts, we try to get period
+                    if ((Math.abs(plotDataValue - startingVal) <= 1) && (flagToGetPeriod) && (i > 20)) {
+                        period = 2 * i;
+                        periodCalc = period * (1 / (10 ^ 6));
+                        // Do it once only
+                        flagToGetPeriod = 0;
+                    }
+                }
             }
             // Plot data onto graph
             chart.series[0].setData(plotData);
             // Change status!
             if (document.getElementById("espstatus").textContent != "Generating Random Data!") {
-                document.getElementById("espstatus").innerHTML = "Successfully Connected to ESP8266!";
+                if (flagToGetPeriod == 0) {
+                    document.getElementById("espstatus").innerHTML = "Got Data with Freq: " + periodCalc.toFixed(2) + " Hz";
+                } else {
+                    document.getElementById("espstatus").innerHTML = "Got Data!" + ", Waveform too slow to compute period";
+                }
             }
+            // Compute DFT
+            fftPlot(plotData);
         },
         // Handle errors when failed to connect to ESP8266
         error: function() {
@@ -72,11 +99,27 @@ function clearFFTPlot() {
     fftChart.series[0].setData(freqPlotData);
 }
 
-// FFT plotting function
+// DFT plotting function
 function fftPlot(dataPoints) {
-    var sum = 0;
-    for (i = 0; i < dataPoints.length; i++) {
-
+    freqPlotData = [];
+    for (k = 0; k < dataPoints.length / 2; k++) {
+        var realPart = 0;
+        var imPart = 0;
+        for (n = 0; n < dataPoints.length; n++) {
+            // theta = exp(-j2pikn/N)
+            var theta = 2 * Math.PI * k * n * (1 / dataPoints.length);
+            // Cos and Sine parts
+            var cosTheta = Math.cos(theta);
+            var sinTheta = Math.sin(theta);
+            // Actual computation for term x[n]exp(-j2pikn/N)
+            realPart += dataPoints[n] * cosTheta;
+            imPart += dataPoints[n] * sinTheta;
+        }
+        frequency = ((k * (10 ^ 6)) / (dataPoints.length));
+        frequency = k;
+        //freqPlotData[k] = [frequency, math.sqrt(math.multiply(realPart, realPart) + math.multiply(imPart, imPart))];
+        var magVal = math.sqrt(math.multiply(realPart, realPart) + math.multiply(imPart, imPart));
+        freqPlotData[k] = [frequency, Math.round(20 * Math.log10(magVal))];
     }
     document.getElementById("fftstatus").innerHTML = "Plotting Frequency Plot!";
     fftChart.series[0].setData(freqPlotData);
@@ -93,6 +136,11 @@ var chart = Highcharts.chart('containerPlot', {
     yAxis: {
         title: {
             text: 'Voltage (V)'
+        },
+    },
+    xAxis: {
+        title: {
+            text: 'Sample Number'
         }
     },
     credits: {
@@ -103,7 +151,8 @@ var chart = Highcharts.chart('containerPlot', {
             label: {
                 connectorAllowed: false
             },
-            pointStart: 0
+            pointStart: 0,
+            turboThreshold: 5000
         }
     },
     series: [{
@@ -129,19 +178,19 @@ var chart = Highcharts.chart('containerPlot', {
 // FFT Plot
 var fftChart = Highcharts.chart('fftPlotContainer', {
     title: {
-        text: 'Frequency Plot'
+        text: 'Frequency Plot using 5000 Point DFT'
     },
     subtitle: {
         text: 'Matthew Yong - 2019'
     },
     yAxis: {
         title: {
-            text: 'Magnitude (Linear)'
+            text: 'Magnitude (dB)'
         }
     },
     xAxis: {
         title: {
-            text: 'Frequency (f)'
+            text: 'Frequency (Hz)'
         }
     },
     credits: {
@@ -156,7 +205,7 @@ var fftChart = Highcharts.chart('fftPlotContainer', {
         }
     },
     series: [{
-        name: 'Magnitude (linear)',
+        name: 'Magnitude (dB)',
         data: freqPlotData
     }],
     responsive: {

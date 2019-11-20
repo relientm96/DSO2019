@@ -21,7 +21,7 @@ const ESP_URL_VER = "http://" + ESP_INTERNAL_IP + "/version";
 const ESP_URL_SCREEN = "http://" + ESP_INTERNAL_IP + "/screen";
 
 // Save interval as an ID to be refered to later to resume/pause
-var contModeIntervalID = setInterval(contModeIntervalID, 5000);
+var contModeIntervalID = setInterval(contModeIntervalID, 7000);
 
 $(document).ready(function() {
 
@@ -35,7 +35,7 @@ $(document).ready(function() {
         //generateData();
         contMode = contMode ^ 1;
         if (contMode == 1) {
-            document.getElementById("contStatus").innerHTML = "Cont mode On!";
+            document.getElementById("contStatus").innerHTML = "Cont mode On! Plotting every 10 seconds";
             contModeIntervalID = setInterval(pollData, 10000);
         } else {
             document.getElementById("contStatus").innerHTML = "Cont mode Off!";
@@ -72,6 +72,7 @@ $(document).ready(function() {
         });
     })
 
+    // Controls for configurations
     $(".numbSampDial").knob({
         "min": 1000,
         "max": 65000,
@@ -81,7 +82,6 @@ $(document).ready(function() {
             numbSamples = v;
         }
     });
-
     $(".triggerDial").knob({
         "min": -5,
         "max": 5,
@@ -106,14 +106,12 @@ function readConfigs() {
     if (document.getElementById('10MhzRadio').checked) {
         sampleRate = 10;
     }
-
     if (document.getElementById('yesForceTrigger').checked) {
         forceTrigger = 1;
     }
     if (document.getElementById('noForceTrigger').checked) {
         forceTrigger = 0;
     }
-
     if (document.getElementById('yesRising').checked) {
         edgeTrigger = 1;
     }
