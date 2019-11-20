@@ -6,6 +6,7 @@ const ESP_URL = "http://192.168.43.170"; //internal IP of ESP8266 from phone
 const len = numbSamples; //2^16 = 65536
 var plotData = [];
 var freqPlotData = [];
+var freqPlotRaw = [];
 
 // Map Function, referenced from Arduino
 function map(x, in_min, in_max, out_min, out_max) {
@@ -14,11 +15,10 @@ function map(x, in_min, in_max, out_min, out_max) {
 
 // Data generated randomly (for test)
 function generateData() {
-    var freq = 200;
     for (i = 0; i < len; i++) {
-        //plotData[i] = (1 + 0.3 * Math.cos(2 * 3.142 * 100 * i)) * Math.cos(2 * 3.142 * 2000 * i);
-        var plotDataValue = Math.round(128 * Math.sin(2 * 3.142 * freq * i) + 16 * Math.sin(2 * 3.142 * 5 * freq * i)) + 127;
+        plotDataValue = (2 * Math.round(Math.cos(2 * 3.142 * 200 * i)) + 127);
         plotData[i] = plotDataValue;
+        //plotData[i] = map(plotDataValue, 0, 255, -5, 5);
     }
     document.getElementById("espstatus").innerHTML = "Generated Signal!";
     chart.series[0].setData(plotData);
@@ -36,6 +36,7 @@ function clearPlot() {
 function pollData() {
     // Initialize variables
     var plotData = [];
+    var freqPlotRaw = [];
     // Variables to try to get period
     var startingVal = 0;
     var flagToGetPeriod = 1;
@@ -50,25 +51,30 @@ function pollData() {
             var valuesArr = result.split(',');
             // Adding data to array and mapping from 0->255 (8 bit unsigned numbers) to , -5 -> 5 Volts
             for (i = 0; i < valuesArr.length; i++) {
+
                 // Reading values into array
                 valueRaw = parseInt(valuesArr[i]);
                 valueOut = map(valueRaw, 0, 255, -5, 5) - 0.30; // Added offset to adjust plot
+                freqPlotRaw.push(valueOut);
                 plotData.push(valueOut);
 
                 // Period calculations
                 if (i == 0) {
                     // Get starting point value
-                    startingVal = plotDataValue;
+                    startingVal = valueOut;
                 } else {
                     // If close enough and first time and after 20 counts, we try to get period
-                    if ((Math.abs(plotDataValue - startingVal) <= 1) && (flagToGetPeriod) && (i > 20)) {
+                    if ((Math.abs(valueOut - startingVal) <= 0.1) && (flagToGetPeriod) && (i > 300)) {
                         period = 2 * i;
+                        console.log(period);
                         periodCalc = period * (1 / (10 ^ 6));
                         // Do it once only
                         flagToGetPeriod = 0;
                     }
                 }
             }
+            // Compute DFT
+            fftPlot(freqPlotRaw);
             // Plot data onto graph
             chart.series[0].setData(plotData);
             // Change status!
@@ -79,8 +85,6 @@ function pollData() {
                     document.getElementById("espstatus").innerHTML = "Got Data!" + ", Waveform too slow to compute period";
                 }
             }
-            // Compute DFT
-            fftPlot(plotData);
         },
         // Handle errors when failed to connect to ESP8266
         error: function() {
@@ -90,6 +94,15 @@ function pollData() {
             }
         }
     });
+}
+
+// Function to get sequence mean
+function mean(numbers) {
+    var total = 0;
+    for (i = 0; i < numbers.length; i++) {
+        total += numbers[i];
+    }
+    return total / numbers.length;
 }
 
 // Clear FFT Plot
@@ -102,24 +115,38 @@ function clearFFTPlot() {
 // DFT plotting function
 function fftPlot(dataPoints) {
     freqPlotData = [];
+    /*
+    var meanSeq = mean(dataPoints);
+    console.log("Mean is:" + meanSeq);
+    for (j = 0; j < dataPoints.length; j++) {
+        dataPoints[j] = dataPoints[j] - meanSeq;
+    }
+    */
     for (k = 0; k < dataPoints.length / 2; k++) {
-        var realPart = 0;
-        var imPart = 0;
-        for (n = 0; n < dataPoints.length; n++) {
-            // theta = exp(-j2pikn/N)
-            var theta = 2 * Math.PI * k * n * (1 / dataPoints.length);
-            // Cos and Sine parts
-            var cosTheta = Math.cos(theta);
-            var sinTheta = Math.sin(theta);
-            // Actual computation for term x[n]exp(-j2pikn/N)
-            realPart += dataPoints[n] * cosTheta;
-            imPart += dataPoints[n] * sinTheta;
+        if (k == 0) {
+            freqPlotData[k] = [k, 0];
+        } else {
+            var realPart = 0;
+            var imPart = 0;
+            for (n = 0; n < dataPoints.length; n++) {
+                // theta = exp(-j2pikn/N)
+                var theta = 2 * 3.142 * k * n * (1 / dataPoints.length);
+                // Cos and Sine parts
+                var cosTheta = Math.cos(theta);
+                var sinTheta = Math.sin(theta);
+                // Actual computation for term x[n]exp(-j2pikn/N)
+                realPart += dataPoints[n] * cosTheta;
+                imPart += dataPoints[n] * sinTheta;
+            }
+            //frequency = ((k * (10 ^ 6)) / (dataPoints.length));
+            frequency = (k * (10 ^ 6)) / (dataPoints.length);
+            //freqPlotData[k] = [frequency, math.sqrt(math.multiply(realPart, realPart) + math.multiply(imPart, imPart))];
+            var magVal = math.sqrt(math.add(math.multiply(realPart, realPart), math.multiply(imPart, imPart)));
+            // freqPlotData[k] = [frequency, Math.round(20 * Math.log10(magVal))]; // dB
+            freqPlotData[k] = [frequency, Math.round(magVal)]; // Linear            
+            console.log("Mag  = ", magVal)
         }
-        frequency = ((k * (10 ^ 6)) / (dataPoints.length));
-        frequency = k;
-        //freqPlotData[k] = [frequency, math.sqrt(math.multiply(realPart, realPart) + math.multiply(imPart, imPart))];
-        var magVal = math.sqrt(math.multiply(realPart, realPart) + math.multiply(imPart, imPart));
-        freqPlotData[k] = [frequency, Math.round(20 * Math.log10(magVal))];
+
     }
     document.getElementById("fftstatus").innerHTML = "Plotting Frequency Plot!";
     fftChart.series[0].setData(freqPlotData);
@@ -185,7 +212,7 @@ var fftChart = Highcharts.chart('fftPlotContainer', {
     },
     yAxis: {
         title: {
-            text: 'Magnitude (dB)'
+            text: 'Magnitude (Linear)'
         }
     },
     xAxis: {
@@ -205,7 +232,7 @@ var fftChart = Highcharts.chart('fftPlotContainer', {
         }
     },
     series: [{
-        name: 'Magnitude (dB)',
+        name: 'Magnitude (Linear)',
         data: freqPlotData
     }],
     responsive: {
