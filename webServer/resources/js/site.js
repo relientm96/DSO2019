@@ -1,44 +1,72 @@
 //Main JS 
 
-var sampleRate  = 40;
-var numbSamples = 10000;
-var triggerVal  = 1; 
-
+// Configuration data for oscilloscope
+var sampleRate = 40;
+var numbSamples = 5000;
+var triggerVal = 1;
 var forceTrigger = 0;
-var edgeTrigger =  0;
+var edgeTrigger = 0;
+// Store configuration data as a string
+var configDat;
+// Flag to store continuos mode
+var contMode = 0;
 
-const CONFIG_URL =  "http://10.0.0.6/config";
-const ESP_URL_VER = "http://10.0.0.6/version";
+// URLS to ESP8266
+const ESP_INTERNAL_IP = "192.168.43.170"; // From phone server
+//const ESP_INTERNAL_IP = "10.0.0.15"; // From home network
 
-$( document ).ready(function() {
+// URLS for inner ESP8266 functions
+const CONFIG_URL = "http://" + ESP_INTERNAL_IP + "/config";
+const ESP_URL_VER = "http://" + ESP_INTERNAL_IP + "/version";
+const ESP_URL_SCREEN = "http://" + ESP_INTERNAL_IP + "/screen";
 
-    generateData();
-    $("#generateBtn").click(function(){
-        generateData();
-        /*
-        $.ajax({
-            url: "http://18.139.115.251/remote/mario",
-            type: 'POST',
-            success: function (result) {
-                document.getElementById("playSongTextHolder").innerHTML = result;
-            },
-            error: function (){
-                document.getElementById("playSongTextHolder").innerHTML = "I don't think the sensor is on...";
-            }
-        });*/
+// Save interval as an ID to be refered to later to resume/pause
+var contModeIntervalID = setInterval(contModeIntervalID, 5000);
+
+$(document).ready(function() {
+
+    // Initializing all statuses
+    document.getElementById("espstatus").innerHTML = "Welcome! Press Any Button!";
+    document.getElementById("contStatus").innerHTML = "Cont mode Off!";
+    document.getElementById("fftstatus").innerHTML = "Press to Plot DFT!";
+
+    // Button routes
+    $("#generateBtn").click(function() {
+        //generateData();
+        contMode = contMode ^ 1;
+        if (contMode == 1) {
+            document.getElementById("contStatus").innerHTML = "Cont mode On!";
+            contModeIntervalID = setInterval(pollData, 10000);
+        } else {
+            document.getElementById("contStatus").innerHTML = "Cont mode Off!";
+            clearInterval(contModeIntervalID);
+        }
     });
-
     $("#plotDataBtn").click(pollData);
     $("#configBtn").click(changeConfig);
-
-    $("#verBtn").click(function(){
+    $("#clearBtn").click(clearPlot);
+    $("#clearFFTBtn").click(clearFFTPlot);
+    $("#generateRandData").click(generateData);
+    $("#screenPlotBtn").click(function() {
+        $.ajax({
+            url: ESP_URL_SCREEN,
+            type: 'GET',
+            success: function(result) {
+                alert("Plotting Plot onto OLED!");
+            },
+            error: function() {
+                alert("Unable to plot data on screen of OLED");
+            }
+        });
+    })
+    $("#verBtn").click(function() {
         $.ajax({
             url: ESP_URL_VER,
             type: 'GET',
-            success: function (result) {
+            success: function(result) {
                 alert("Version number: " + result);
             },
-            error: function (){
+            error: function() {
                 alert("Unable to receive version number from ESP8266");
             }
         });
@@ -49,24 +77,25 @@ $( document ).ready(function() {
         "max": 65000,
         "width": 150,
         "height": 150,
-        "change" : function (v) {
-             numbSamples = v;
-        }        
+        "change": function(v) {
+            numbSamples = v;
+        }
     });
 
     $(".triggerDial").knob({
         "min": -5,
         "max": 5,
         "width": 150,
-        "height": 150,  
-        "change" : function (v) {
+        "height": 150,
+        "change": function(v) {
             triggerVal = v;
-       }        
+        }
     });
+
 })
 
 //Read all values function
-function readConfigs(){
+function readConfigs() {
     //Reading Radio Values
     if (document.getElementById('40MhzRadio').checked) {
         sampleRate = 40;
@@ -94,38 +123,50 @@ function readConfigs(){
 }
 
 //Print configuration function for debug
-function printConfig(){
-    console.log("Number of Samples:",Math.floor(numbSamples));
-    console.log("Trigger value:",Math.floor(triggerVal));
-    console.log("Sample Rate:",sampleRate);
-    console.log("Force Trigger:",forceTrigger);
-    console.log("Edge Trigger:",edgeTrigger);
+function printConfig() {
+    console.log("Number of Samples:", Math.floor(numbSamples));
+    console.log("Trigger value:", Math.floor(triggerVal));
+    console.log("Sample Rate:", sampleRate);
+    console.log("Force Trigger:", forceTrigger);
+    console.log("Edge Trigger:", edgeTrigger);
 }
 
 //Send Configurations to MCU
-function changeConfig(){
+function changeConfig() {
     readConfigs();
     printConfig();
 
-    var message = "n"   + Math.floor(numbSamples)   + " " +
-                  "t"   + Math.floor(triggerVal)    + " " +
-                  "s"   + Math.floor(sampleRate)    + " " + 
-                  "f"   + Math.floor(forceTrigger)  + " " +
-                  "e"   + Math.floor(edgeTrigger);
-    
+    /*
+    var message = "n" + Math.floor(numbSamples) + " " +
+        "t" + Math.floor(triggerVal) + " " +
+        "s" + Math.floor(sampleRate) + " " +
+        "f" + Math.floor(forceTrigger) + " " +
+        "e" + Math.floor(edgeTrigger);
+
     console.log(message)
+    */
+    var configDat = {
+        "numberOfSamples": Math.floor(numbSamples),
+        "triggerValue": Math.floor(triggerVal),
+        "samplingFreq": Math.floor(sampleRate),
+        "forceTrigger": Math.floor(forceTrigger),
+        "edgeTrigger": Math.floor(edgeTrigger)
+    }
+
+    console.log(configDat);
 
     //Send data to ESP8266 via POST request
     $.ajax({
         url: CONFIG_URL,
         type: 'POST',
         dataType: 'text',
-        data: message,
-        success: function (result) {
-            alert("Sent Configs to ESP8266!")
+        data: JSON.stringify(configDat),
+        success: function(result) {
+            // Return configurations from MCU
+            alert("New Configs: " + result);
         },
-        error: function (){
-            alert("Error in sending configs to ESP8266!")
+        error: function() {
+            alert("Error in setting configs to ESP8266!");
         }
     });
 }
