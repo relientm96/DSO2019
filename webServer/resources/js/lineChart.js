@@ -6,7 +6,6 @@ const ESP_URL = "http://192.168.43.170"; //internal IP of ESP8266 from phone
 const len = numbSamples; //2^16 = 65536
 var plotData = [];
 var freqPlotData = [];
-var freqPlotRaw = [];
 
 // Map Function, referenced from Arduino
 function map(x, in_min, in_max, out_min, out_max) {
@@ -36,7 +35,6 @@ function clearPlot() {
 function pollData() {
     // Initialize variables
     var plotData = [];
-    var freqPlotRaw = [];
     // Variables to try to get period
     var startingVal = 0;
     var flagToGetPeriod = 1;
@@ -54,19 +52,17 @@ function pollData() {
 
                 // Reading values into array
                 valueRaw = parseInt(valuesArr[i]);
-                valueOut = map(valueRaw, 0, 255, -5, 5) - 0.30; // Added offset to adjust plot
-                freqPlotRaw.push(valueOut);
+                valueOut = map(valuesArr[i], 0, 255, -5, 5) - 0.30; // Added offset to adjust plot
                 plotData.push(valueOut);
 
                 // Period calculations
                 if (i == 0) {
                     // Get starting point value
-                    startingVal = valueOut;
+                    startingVal = valuesArr[i];
                 } else {
                     // If close enough and first time and after 20 counts, we try to get period
-                    if ((Math.abs(valueOut - startingVal) <= 0.1) && (flagToGetPeriod) && (i > 300)) {
+                    if ((Math.abs(valueOut - startingVal) <= 1) && (flagToGetPeriod) && (i > 5)) {
                         period = 2 * i;
-                        console.log(period);
                         periodCalc = period * (1 / (10 ^ 6));
                         // Do it once only
                         flagToGetPeriod = 0;
@@ -74,7 +70,7 @@ function pollData() {
                 }
             }
             // Compute DFT
-            fftPlot(freqPlotRaw);
+            fftPlot(plotData);
             // Plot data onto graph
             chart.series[0].setData(plotData);
             // Change status!
@@ -115,14 +111,16 @@ function clearFFTPlot() {
 // DFT plotting function
 function fftPlot(dataPoints) {
     freqPlotData = [];
+
     /*
     var meanSeq = mean(dataPoints);
-    console.log("Mean is:" + meanSeq);
     for (j = 0; j < dataPoints.length; j++) {
         dataPoints[j] = dataPoints[j] - meanSeq;
     }
     */
-    for (k = 0; k < dataPoints.length / 2; k++) {
+
+
+    for (k = 0; k < 50; k++) {
         if (k == 0) {
             freqPlotData[k] = [k, 0];
         } else {
@@ -135,16 +133,15 @@ function fftPlot(dataPoints) {
                 var cosTheta = Math.cos(theta);
                 var sinTheta = Math.sin(theta);
                 // Actual computation for term x[n]exp(-j2pikn/N)
-                realPart += dataPoints[n] * cosTheta;
-                imPart += dataPoints[n] * sinTheta;
+                realPart = math.add(realPart, (dataPoints[n] * cosTheta));
+                imPart = math.add(imPart, (dataPoints[n] * sinTheta));
             }
             //frequency = ((k * (10 ^ 6)) / (dataPoints.length));
-            frequency = (k * (10 ^ 6)) / (dataPoints.length);
+            frequency = k;
             //freqPlotData[k] = [frequency, math.sqrt(math.multiply(realPart, realPart) + math.multiply(imPart, imPart))];
             var magVal = math.sqrt(math.add(math.multiply(realPart, realPart), math.multiply(imPart, imPart)));
             // freqPlotData[k] = [frequency, Math.round(20 * Math.log10(magVal))]; // dB
             freqPlotData[k] = [frequency, Math.round(magVal)]; // Linear            
-            console.log("Mag  = ", magVal)
         }
 
     }
@@ -217,7 +214,7 @@ var fftChart = Highcharts.chart('fftPlotContainer', {
     },
     xAxis: {
         title: {
-            text: 'Frequency (Hz)'
+            text: 'Frequency bins'
         }
     },
     credits: {
