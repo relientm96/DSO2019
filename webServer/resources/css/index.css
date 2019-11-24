@@ -1,0 +1,15 @@
+html{
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #fefefe;
+    text-align: center;
+}
+
+#containerPlot {
+    min-width: 100%; /*310px*/
+	max-width: 100%; /*800px*/
+	height: 400px;
+	margin: 0 auto
+}

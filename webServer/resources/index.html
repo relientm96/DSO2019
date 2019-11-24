@@ -1,0 +1,166 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Bootstrap Imports -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!--Materialize Imports-->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Google Icon Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--Highcharts Imports -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+    <!-- Index CSS -->
+    <link rel="stylesheet" text="text/css" href="css/index.css"> </link>
+    <script src="js/site.js"></script>
+
+    <!-- Math Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.min.js"></script>
+
+    <!-- JQuery Knob-->
+    <script src="https://rawcdn.githack.com/aterrien/jQuery-Knob/755309e933d326ffaa5a2d758dc377147b766515/dist/jquery.knob.min.js"></script>
+    <title>DSO Interface 2019</title>
+
+</head>
+
+<body>
+
+    <div id="readingSection" class="container">
+        <div class="section">
+            <div class="card hoverable">
+                <div class="card-content">
+                    <h3> Digital Oscilloscope Plot </h3>
+                    <a id="verBtn" class="waves-effect waves-light btn" style="color: white">Version</a>
+                    <br>
+                    <div id="containerPlot"></div>
+                    <h5 id="espstatus"></h5>
+                    <h6 id="contStatus"></h6>
+                    <div style="display:inline-block">
+                        <a id="generateRandData" class="waves-effect purple darken-3 waves-light btn" style="color: white">Generate Data</a>
+                        <a id="plotDataBtn" class="waves-effect purple darken-1 waves-light btn" style="color: white">Plot From DSO</a>
+                        <a id="generateBtn" class="waves-effect purple lighten-1 waves-light btn" style="color: white">Continuous Mode</a>
+                    </div>
+                    <div style="display:inline-block">
+                        <a id="screenPlotBtn" class="waves-effect blue darken-2 waves-light btn" style="color: white">Plot onto OLED!</a>
+                        <a id="clearBtn" class="waves-effect blue lighten-1 waves-light btn" style="color: white">Clear Data</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="readingSection" class="container">
+        <div class="section">
+            <div class="card hoverable">
+                <div class="card-content">
+                    <h3> Frequency Plot </h3>
+                    <br>
+                    <div id="fftPlotContainer"></div>
+                    <h5 id="fftstatus"></h5>
+                    <div style="display:inline-block">
+                        <a id="clearFFTBtn" class="waves-effect red darken-1 waves-light btn" style="color: white">Clear Freq</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card hoverable">
+            <div class="card-content">
+                <h5>Configuration Settings</h5>
+                <br>
+                <div class="row">
+
+                    <div class="col s12 m12 l6">
+                        <h5>Sample Rate</h5>
+                        <br>
+                        <form>
+                            <p>
+                                <label>
+                      <input id="40MhzRadio" class="with-gap" name="group1" type="radio"/>
+                      <span>40MHz</span>
+                    </label>
+                            </p>
+                            <p>
+                                <label>
+                        <input id="20MhzRadio" class="with-gap" name="group1" type="radio"/>
+                        <span>20MHz</span>
+                      </label>
+                            </p>
+                            <p>
+                                <label>
+                      <input id="10MhzRadio" class="with-gap" name="group1" type="radio"/>
+                      <span>10MHz</span>
+                    </label>
+                            </p>
+                        </form>
+                        <h5>Force Trigger</h5>
+                        <form>
+                            <p>
+                                <label>
+                        <input id="yesForceTrigger" class="with-gap" name="group1" type="radio"/>
+                        <span>Force Trigger</span>
+                      </label>
+                            </p>
+                            <p>
+                                <label>
+                          <input id="noForceTrigger" class="with-gap" name="group1" type="radio"/>
+                          <span>No Force Trigger</span>
+                        </label>
+                            </p>
+                        </form>
+                        <h5>Edge Trigger</h5>
+                        <form>
+                            <p>
+                                <label>
+                        <input id="yesRising" class="with-gap" name="group1" type="radio"/>
+                        <span>Rising Edge</span>
+                      </label>
+                            </p>
+                            <p>
+                                <label>
+                          <input id="yesFalling"  class="with-gap" name="group1" type="radio"/>
+                          <span>Falling Edge</span>
+                        </label>
+                            </p>
+                        </form>
+                    </div>
+
+                    <div class="col s12 m12 l6">
+                        <h5>Number of Samples</h5>
+                        <input type="text" value="1000" class="numbSampDial">
+                        <h5>Trigger Value</h5>
+                        <input type="text" value="0" class="triggerDial">
+                    </div>
+
+                </div>
+                <a id="configBtn" class="waves-effect waves-light btn" style="color: white">Update</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/lineChart.js"></script>
+
+</body>
+
+</html>
