@@ -17,7 +17,6 @@ function generateData() {
     for (i = 0; i < len; i++) {
         plotDataValue = (2 * Math.round(Math.cos(2 * 3.142 * 200 * i)) + 127);
         plotData[i] = plotDataValue;
-        //plotData[i] = map(plotDataValue, 0, 255, -5, 5);
     }
     document.getElementById("espstatus").innerHTML = "Generated Signal!";
     chart.series[0].setData(plotData);
@@ -111,15 +110,12 @@ function clearFFTPlot() {
 // DFT plotting function
 function fftPlot(dataPoints) {
     freqPlotData = [];
-
     /*
     var meanSeq = mean(dataPoints);
     for (j = 0; j < dataPoints.length; j++) {
         dataPoints[j] = dataPoints[j] - meanSeq;
     }
     */
-
-
     for (k = 0; k < 50; k++) {
         if (k == 0) {
             freqPlotData[k] = [k, 0];
