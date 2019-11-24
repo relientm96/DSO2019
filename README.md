@@ -1,6 +1,13 @@
 # DSO2019
 Repository of a self-made Digital Oscilloscope Project. Guided by ELEN90053 Electronic System Design subject at the University of Melbourne. 
 
+# Table of Contents
+  * [Main Features:](#main-features-)
+  * [Subsystems](#subsystems)
+  * [System Block Diagram](#system-block-diagram)
+  * [PCB Design](#pcb-design)
+  * [How it works](#how-it-works)
+
 ## Main Features:
 - Printed Circuit Board designed in Altium Designer.    
 - Atmega16 microcontroller programmed in C.  
