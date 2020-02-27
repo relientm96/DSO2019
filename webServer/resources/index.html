@@ -43,55 +43,53 @@
 </head>
 
 <body>
-
+    <h4> Digital Signal Oscilloscope Online GUI </h4>
     <div id="readingSection" class="container">
         <div class="section">
-            <div class="card hoverable">
-                <div class="card-content">
-                    <h3> Digital Oscilloscope Plot </h3>
-                    <a id="verBtn" class="waves-effect waves-light btn" style="color: white">Version</a>
-                    <br>
-                    <div id="containerPlot"></div>
-                    <h5 id="espstatus"></h5>
-                    <h6 id="contStatus"></h6>
-                    <div style="display:inline-block">
-                        <a id="generateRandData" class="waves-effect purple darken-3 waves-light btn" style="color: white">Generate Data</a>
-                        <a id="plotDataBtn" class="waves-effect purple darken-1 waves-light btn" style="color: white">Plot From DSO</a>
-                        <a id="generateBtn" class="waves-effect purple lighten-1 waves-light btn" style="color: white">Continuous Mode</a>
-                    </div>
-                    <div style="display:inline-block">
-                        <a id="screenPlotBtn" class="waves-effect blue darken-2 waves-light btn" style="color: white">Plot onto OLED!</a>
-                        <a id="clearBtn" class="waves-effect blue lighten-1 waves-light btn" style="color: white">Clear Data</a>
+            <div class="row">
+                <div class="col s12 m12 l6">
+                    <div class="card hoverable">
+                        <div class="card-content">
+                            <h5> Digital Oscilloscope Plot </h5>
+                            <br>
+                            <div id="containerPlot" style="height:auto;width:auto;max-height: 300px;"></div>
+                            <h5 id="espstatus"></h5>
+                            <h6 id="contStatus"></h6>
+                            <a id="clearBtn" class="waves-effect red darken-1 waves-light btn " style="color: white ">Clear Data</a>
+                        </div>
                     </div>
                 </div>
+                <div class="col s12 m12 l6">
+                    <div class="card hoverable ">
+                        <div class="card-content ">
+                            <h5> Frequency Plot </h5>
+                            <br>
+                            <div id="fftPlotContainer" style="height:auto;width:auto;max-height: 300px;"></div>
+                            <h5 id="fftstatus"></h5>
+                            <a id="clearFFTBtn" class="waves-effect red darken-1 waves-light btn " style="color: white ">Clear Freq</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:inline-block">
+                <a id="generateRandData" class="waves-effect purple lighten-1 waves-light btn " style="color: white ">Generate Data</a>
+                <a id="plotDataBtn" class="waves-effect purple lighten-1 waves-light btn" style="color: white ">Plot From DSO</a>
+                <a id="generateBtn" class="waves-effect purple lighten-1 waves-light btn " style="color: white ">Continuous Mode</a>
+                <a id="screenPlotBtn" class="waves-effect purple lighten-1 waves-light btn " style="color: white ">Plot onto OLED!</a>
+                <a id="verBtn" class="waves-effect purple lighten-1 waves-light btn " style="color: white ">Version</a>
             </div>
         </div>
     </div>
 
-    <div id="readingSection" class="container">
-        <div class="section">
-            <div class="card hoverable">
-                <div class="card-content">
-                    <h3> Frequency Plot </h3>
-                    <br>
-                    <div id="fftPlotContainer"></div>
-                    <h5 id="fftstatus"></h5>
-                    <div style="display:inline-block">
-                        <a id="clearFFTBtn" class="waves-effect red darken-1 waves-light btn" style="color: white">Clear Freq</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="card hoverable">
-            <div class="card-content">
+    <div class="container ">
+        <div class="card hoverable ">
+            <div class="card-content ">
                 <h5>Configuration Settings</h5>
                 <br>
-                <div class="row">
+                <div class="row ">
 
-                    <div class="col s12 m12 l6">
+                    <div class="col s12 m12 l6 ">
                         <h5>Sample Rate</h5>
                         <br>
                         <form>
@@ -146,7 +144,7 @@
                         </form>
                     </div>
 
-                    <div class="col s12 m12 l6">
+                    <div class="col s12 m12 l6 ">
                         <h5>Number of Samples</h5>
                         <input type="text" value="1000" class="numbSampDial">
                         <h5>Trigger Value</h5>
@@ -154,12 +152,12 @@
                     </div>
 
                 </div>
-                <a id="configBtn" class="waves-effect waves-light btn" style="color: white">Update</a>
+                <a id="configBtn" class="waves-effect waves-light btn " style="color: white ">Update</a>
             </div>
         </div>
     </div>
 
-    <script src="js/lineChart.js"></script>
+    <script src="js/lineChart.js "></script>
 
 </body>
 

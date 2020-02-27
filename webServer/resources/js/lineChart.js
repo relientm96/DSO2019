@@ -1,7 +1,6 @@
 //Chart Scripts
 
-const ESP_URL = "http://192.168.43.170"; //internal IP of ESP8266 from phone
-//const ESP_URL = "http://10.0.0.15"; //internal IP of ESP8266 from home network
+const ESP_URL = "http://10.0.0.16"; //internal IP of ESP8266 from home network
 
 const len = numbSamples; //2^16 = 65536
 var plotData = [];
@@ -15,7 +14,7 @@ function map(x, in_min, in_max, out_min, out_max) {
 // Data generated randomly (for test)
 function generateData() {
     for (i = 0; i < len; i++) {
-        plotDataValue = (2 * Math.round(Math.cos(2 * 3.142 * 200 * i)) + 127);
+        plotDataValue = (2 * Math.round(50 * Math.cos(2 * 3.142 * 10 * i)) + 127);
         plotData[i] = plotDataValue;
     }
     document.getElementById("espstatus").innerHTML = "Generated Signal!";
@@ -52,8 +51,9 @@ function pollData() {
                 // Reading values into array
                 valueRaw = parseInt(valuesArr[i]);
                 valueOut = map(valuesArr[i], 0, 255, -5, 5) - 0.30; // Added offset to adjust plot
-                plotData.push(valueOut);
-
+                if ((valueOut > -5) && (valueOut < 5)) {
+                    plotData.push(valueOut);
+                }
                 // Period calculations
                 if (i == 0) {
                     // Get starting point value
@@ -77,7 +77,7 @@ function pollData() {
                 if (flagToGetPeriod == 0) {
                     document.getElementById("espstatus").innerHTML = "Got Data with Freq: " + periodCalc.toFixed(2) + " Hz";
                 } else {
-                    document.getElementById("espstatus").innerHTML = "Got Data!" + ", Waveform too slow to compute period";
+                    document.getElementById("espstatus").innerHTML = "Got Data!";
                 }
             }
         },

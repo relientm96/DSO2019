@@ -14,6 +14,13 @@ Repository of a self-made Digital Oscilloscope Project. Guided by ELEN90053 Elec
 - ESP8266 WiFi chip with OLED Screen Display.  
 - Web Interface displaying waveform and discrete fourier transform plots, developed using Express.js, HighCharts and Materialize. 
 
+<div style="text-align:center;">
+    <img src="images/dsoOnly.jpg"  />
+    <p>Diagram of Finished DSO Board</p>
+    <img src="images/espTop.jpeg"  /> 
+    <p>Diagram of IOT ESP8266 Addon with OLED</p>
+</div>
+
 ## Subsystems
 Within the Digital Oscilloscope (DSO), the following subsystems are involved:
 

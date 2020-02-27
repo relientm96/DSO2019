@@ -30,10 +30,10 @@
 //Constants
 #define DATA_LEN 5000
 #define DATA_LEN_ARRAY 1000  
-#define WIFI_NAME "mattMI"
-#define WIFI_PASS "badbedbada"
-//#define WIFI_NAME "Belong3D3DC4"
-//#define WIFI_PASS "tkab4pau6uqx"
+//#define WIFI_NAME "china"
+//#define WIFI_PASS "bidibadadowop"
+#define WIFI_NAME "Belong3D3DC4"
+#define WIFI_PASS "tkab4pau6uqx"
 
 //Creating a multiwii class
 ESP8266WiFiMulti wifiMulti;

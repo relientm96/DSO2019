@@ -12,8 +12,7 @@ var configDat;
 var contMode = 0;
 
 // URLS to ESP8266
-const ESP_INTERNAL_IP = "192.168.43.170"; // From phone server
-//const ESP_INTERNAL_IP = "10.0.0.15"; // From home network
+const ESP_INTERNAL_IP = "10.0.0.16"; // From home network
 
 // URLS for inner ESP8266 functions
 const CONFIG_URL = "http://" + ESP_INTERNAL_IP + "/config";
@@ -26,7 +25,7 @@ var contModeIntervalID = setInterval(contModeIntervalID, 7000);
 $(document).ready(function() {
 
     // Initializing all statuses
-    document.getElementById("espstatus").innerHTML = "Welcome! Press Any Button!";
+    document.getElementById("espstatus").innerHTML = "Welcome! Press Any Button Below!";
     document.getElementById("contStatus").innerHTML = "Cont mode Off!";
     document.getElementById("fftstatus").innerHTML = "Press to Plot DFT!";
 
