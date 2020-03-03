@@ -1,6 +1,6 @@
 {
-    "name": "foobar-app",
-    "version": "0.1.0",
+    "name": "dso-dashboard",
+    "version": "1.0",
     "scripts": {
         "postinstall": "npm install --prefix webServer"
     }
