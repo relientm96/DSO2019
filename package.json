@@ -2,6 +2,7 @@
     "name": "dso-dashboard",
     "version": "1.0",
     "scripts": {
-        "postinstall": "npm install --prefix webServer"
+        "postinstall": "npm install --prefix webServer",
+        "start": "node webServer/index.js"
     }
 }
